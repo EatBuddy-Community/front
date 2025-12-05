@@ -16,7 +16,7 @@ export default function ToggleSwitchButton() {
   const { isBoolean, toggle } = useToggle();
   return (
     <div
-      className={`flex items-center justify-between w-24 h-9 ${
+      className={`relative flex items-center justify-between w-24 h-9 ${
         isBoolean ? "bg-amber-500" : "bg-green-500"
       } rounded-full px-3`}
       onClick={toggle}
