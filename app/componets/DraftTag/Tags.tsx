@@ -6,7 +6,7 @@ interface TagItem {
 
 export default function Tags({ label }: TagItem): JSX.Element {
   return (
-    <div className="min-w-8 min-h-8 border-1 max-w-8 max-h-8">
+    <div className="min-w-64 min-h-32  max-w-64 max-h-32 backdrop-blur-sm bg-black/25 rounded-[10px]">
       <span>{label}</span>
     </div>
   );

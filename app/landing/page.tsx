@@ -1,4 +1,5 @@
 import Content from "./Content.server";
+import Footer from "./footer.server";
 import Headers from "./Header.server";
 
 export default function Landing() {
@@ -6,6 +7,7 @@ export default function Landing() {
     <div>
       <Headers />
       <Content></Content>
+      <Footer></Footer>
     </div>
   );
 }
