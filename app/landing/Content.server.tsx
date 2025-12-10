@@ -27,11 +27,11 @@ export default function Content() {
               setSelectedTag((prev) => (prev === tag ? null : tag))
             }
             className={
-              tag === selectedTag ? "absolute top-[-230px]" : "relative"
+              tag === selectedTag ? "absolute top-[-280px]" : "relative"
             }
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
           >
-            <Tags label={tag} />
+            <Tags label={tag} isSelected={tag === selectedTag} />
           </motion.div>
         ))}
       </div>
