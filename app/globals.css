@@ -27,3 +27,22 @@ body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
 }
+@keyframes marker-ping {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+.marker-light {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(249, 115, 22, 0.6); /* 오렌지색 */
+  border-radius: 50%;
+  animation: marker-ping 1.5s infinite;
+}
