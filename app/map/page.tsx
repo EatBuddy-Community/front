@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react"; // 1. useState 추가
+import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 
 declare global {
@@ -13,7 +13,10 @@ export default function Map() {
   const MapContainer = useRef<HTMLDivElement>(null);
   const MapInstance = useRef<any>(null);
 
-  // 2. 선택된 식당 정보를 담을 상태 추가
+  // [추가] 내 위치 마커와 라벨을 관리하기 위한 Ref (중복 생성 방지)
+  const myLocationMarkerRef = useRef<any>(null);
+  const myLocationOverlayRef = useRef<any>(null);
+
   const [selectedPlace, setSelectedPlace] = useState<any>(null);
 
   const initMap = () => {
@@ -28,6 +31,9 @@ export default function Map() {
             const options = { center: locPosition, level: 3 };
             const map = new kakao.maps.Map(MapContainer.current, options);
             MapInstance.current = map;
+
+            // [추가] 내 위치 마커 표시
+            displayMyLocation(locPosition);
             searchPlaces(lat, lon);
           },
           () => startWithDefaultLocation()
@@ -36,6 +42,54 @@ export default function Map() {
         startWithDefaultLocation();
       }
     }
+  };
+
+  // [추가] 내 위치 커스텀 마커 함수
+  const displayMyLocation = (position: any) => {
+    const kakao = window.kakao;
+    if (myLocationMarkerRef.current) myLocationMarkerRef.current.setMap(null);
+    if (myLocationOverlayRef.current) myLocationOverlayRef.current.setMap(null);
+
+    const imageSrc = "/marker.png";
+    const imageSize = new kakao.maps.Size(90, 90); // 마커 크기 (적절히 조절하세요)
+    const imageOption = { offset: new kakao.maps.Point(25, 50) }; // 마커의 좌표와 일치시킬 이미지 안의 지점
+
+    const markerImage = new kakao.maps.MarkerImage(
+      imageSrc,
+      imageSize,
+      imageOption
+    );
+
+    const marker = new kakao.maps.Marker({
+      position,
+      image: markerImage,
+      map: MapInstance.current,
+      zIndex: 10,
+    });
+
+    const content = `
+      <div style="
+        background: #3b82f6;
+        color: white;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: bold;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        border: 2px solid white;
+        bottom: 38px;
+        position: relative;
+      ">내 위치</div>`;
+
+    const overlay = new kakao.maps.CustomOverlay({
+      content: content,
+      position,
+      map: MapInstance.current,
+      yAnchor: 1,
+    });
+
+    myLocationMarkerRef.current = marker;
+    myLocationOverlayRef.current = overlay;
   };
 
   const startWithDefaultLocation = () => {
@@ -47,6 +101,7 @@ export default function Map() {
       level: 3,
     });
     MapInstance.current = map;
+    displayMyLocation(locPosition); // [추가]
     searchPlaces(defaultLat, defaultLon);
   };
 
@@ -72,14 +127,12 @@ export default function Map() {
     const kakao = window.kakao;
     const position = new kakao.maps.LatLng(place.y, place.x);
 
-    // 1. 실제 마커 생성
     const marker = new kakao.maps.Marker({
       map: MapInstance.current,
       position: position,
     });
 
-    // 2. [추가] 대기자가 있는 경우 불빛 효과 (임시로 홀수 식당에만 효과 부여)
-    const hasWaitingBuddies = parseInt(place.id) % 2 === 0; // 나중엔 DB 데이터로 판단
+    const hasWaitingBuddies = parseInt(place.id) % 2 === 0;
 
     if (hasWaitingBuddies) {
       const content = document.createElement("div");
@@ -102,21 +155,43 @@ export default function Map() {
         </div>
       `;
 
-      const overlay = new kakao.maps.CustomOverlay({
+      new kakao.maps.CustomOverlay({
         content: content,
         map: MapInstance.current,
         position: position,
-        yAnchor: 1, // 마커 위에 표시되도록 위치 조정
+        yAnchor: 1,
       });
     }
 
-    // 마커 클릭 이벤트는 그대로 유지
     kakao.maps.event.addListener(marker, "click", () => {
       setSelectedPlace(place);
     });
   };
+
   return (
     <div className="flex flex-col items-center w-full p-4 bg-gray-50 min-h-screen relative">
+      <style jsx global>{`
+        .marker-light {
+          position: absolute;
+          width: 40px;
+          height: 40px;
+          background: rgba(249, 115, 22, 0.4);
+          border-radius: 50%;
+          animation: pulse 2s infinite;
+          bottom: 15px;
+        }
+        @keyframes pulse {
+          0% {
+            transform: scale(0.5);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(2.5);
+            opacity: 0;
+          }
+        }
+      `}</style>
+
       <div className="mb-6 text-center">
         <h1 className="text-3xl font-extrabold text-orange-500 mb-2 italic text-shadow">
           EatBuddy
@@ -134,11 +209,10 @@ export default function Map() {
         ></div>
       </div>
 
-      {/* 4. 모달 UI (Tailwind CSS) */}
+      {/* 모달 UI (사용자님의 원본 디자인 그대로 유지) */}
       {selectedPlace && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
           <div className="bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-            {/* 모달 헤더 */}
             <div className="p-5 border-b flex justify-between items-center bg-orange-50">
               <div>
                 <h2 className="text-xl font-bold text-gray-800">
@@ -156,7 +230,6 @@ export default function Map() {
               </button>
             </div>
 
-            {/* 모달 바디 (식당 정보 상세 페이지 <iframe>) */}
             <div className="flex-1 overflow-y-auto">
               <iframe
                 src={selectedPlace.place_url.replace("http://", "https://")}
@@ -164,7 +237,6 @@ export default function Map() {
               ></iframe>
             </div>
 
-            {/* 모달 푸터 */}
             <div className="p-4 bg-gray-50 border-t flex flex-col gap-3">
               <div className="flex items-center justify-between px-2 text-sm text-gray-500 font-medium">
                 <span>
@@ -173,21 +245,17 @@ export default function Map() {
               </div>
 
               <div className="flex gap-2">
-                {/* 매칭하기 버튼 */}
                 <button
                   onClick={() => {
-                    // 실제 매칭 로직 (예: 채팅방 생성, DB 저장 등)이 들어갈 자리입니다.
                     alert(
                       `${selectedPlace.place_name}에서 밥친구 매칭을 시작합니다!`
                     );
-                    // 여기서 로그인이 안 되어 있다면 로그인 페이지로, 되어 있다면 매칭 폼으로 보냅니다.
                   }}
                   className="flex-[2] bg-orange-500 text-white text-center py-4 rounded-2xl font-bold text-lg hover:bg-orange-600 shadow-lg shadow-orange-200 transition-all active:scale-95"
                 >
                   🍚 함께 먹을 버디 찾기 (매칭)
                 </button>
 
-                {/* 정보 확인용 서브 버튼 */}
                 <a
                   href={selectedPlace.place_url}
                   target="_blank"
@@ -196,7 +264,8 @@ export default function Map() {
                   상세정보
                 </a>
               </div>
-              <div className="p-5 bg-orange-50 border-b border-orange-100">
+
+              <div className="p-5 bg-orange-50 border-b border-orange-100 rounded-2xl">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="flex h-3 w-3 relative">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
@@ -208,7 +277,6 @@ export default function Map() {
                 </div>
 
                 <div className="flex -space-x-3 overflow-hidden">
-                  {/* 대기자 프로필 이미지들 (DB 연동 전 임시 데이터) */}
                   {[1, 2, 3].map((i) => (
                     <div
                       key={i}
