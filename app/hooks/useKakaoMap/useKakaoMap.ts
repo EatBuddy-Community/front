@@ -7,6 +7,7 @@ export const useKakaoMap = (
   const myLocationMarkerRef = useRef<any>(null);
   const myLocationOverlayRef = useRef<any>(null);
   const [places, setPlaces] = useState<any[]>([]);
+  const markersRef = useRef<Map<string, any>>(new Map());
 
   const placeCache = useRef(new Map<string, any[]>()); // 캐시 저장소
   const generateKey = (lat: number, lng: number) => {
@@ -117,5 +118,5 @@ export const useKakaoMap = (
     searchNearbyPlaces(lat, lon);
   };
 
-  return { initMap, mapInstance: mapInstance.current, places };
+  return { initMap, mapInstance: mapInstance.current, places, markersRef };
 };

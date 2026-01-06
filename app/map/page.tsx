@@ -8,7 +8,8 @@ import { PlaceModal } from "../componets/PlaceModal/PlaceModal";
 export default function Map() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const [selectedPlace, setSelectedPlace] = useState<any>(null);
-  const { initMap, places, mapInstance } = useKakaoMap(mapContainer);
+  const { initMap, places, mapInstance, markersRef } =
+    useKakaoMap(mapContainer);
 
   const handleMapLoad = () => {
     window.kakao.maps.load(() => {
@@ -25,11 +26,14 @@ export default function Map() {
     if (!mapInstance || places.length === 0) return;
 
     places.forEach((place) => {
+      if (markersRef.current.has(place.id)) return;
       const position = new window.kakao.maps.LatLng(place.y, place.x);
       const marker = new window.kakao.maps.Marker({
         map: mapInstance,
         position,
       });
+
+      markersRef.current.set(place.id, marker);
 
       window.kakao.maps.event.addListener(marker, "click", () =>
         setSelectedPlace(place)
