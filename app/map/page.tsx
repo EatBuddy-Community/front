@@ -4,12 +4,21 @@ import { useRef, useState, useEffect } from "react";
 import Script from "next/script";
 import { useKakaoMap } from "../hooks/useKakaoMap/useKakaoMap";
 import { PlaceModal } from "../componets/PlaceModal/PlaceModal";
+import { Sidebar } from "../componets/SideBar/sidebar";
 
 export default function Map() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const [selectedPlace, setSelectedPlace] = useState<any>(null);
   const { initMap, places, mapInstance, markersRef } =
     useKakaoMap(mapContainer);
+
+  // 2. 사이드바 리스트 클릭 시 지도를 이동시키는 함수
+  const handlePlaceClick = (place: any) => {
+    if (!mapInstance) return;
+    const moveLatLon = new window.kakao.maps.LatLng(place.y, place.x);
+    mapInstance.panTo(moveLatLon); // 부드럽게 이동
+    setSelectedPlace(place); // 모달 띄우기
+  };
 
   const handleMapLoad = () => {
     window.kakao.maps.load(() => {
@@ -24,7 +33,6 @@ export default function Map() {
 
   useEffect(() => {
     if (!mapInstance || places.length === 0) return;
-
     places.forEach((place) => {
       if (markersRef.current.has(place.id)) return;
       const position = new window.kakao.maps.LatLng(place.y, place.x);
@@ -32,9 +40,7 @@ export default function Map() {
         map: mapInstance,
         position,
       });
-
       markersRef.current.set(place.id, marker);
-
       window.kakao.maps.event.addListener(marker, "click", () =>
         setSelectedPlace(place)
       );
@@ -57,7 +63,29 @@ export default function Map() {
   }, [places, mapInstance]);
 
   return (
-    <div className="flex flex-col items-center w-full p-4 bg-gray-50 min-h-screen relative">
+    // 3. 기존의 flex-col을 flex-row(기본값)로 바꾸고 h-screen을 줍니다.
+    <div className="flex h-screen w-full bg-gray-50 overflow-hidden">
+      {/* 4. 사이드바 추가 (데이터와 클릭 함수 전달) */}
+      <Sidebar places={places} onPlaceClick={handlePlaceClick} />
+
+      {/* 5. 지도 영역 (flex-1로 나머지 공간 꽉 채우기) */}
+      <div className="flex-1 relative">
+        <div ref={mapContainer} className="w-full h-full"></div>
+
+        {/* 선택된 장소 모달 */}
+        {selectedPlace && (
+          <PlaceModal
+            place={selectedPlace}
+            onClose={() => setSelectedPlace(null)}
+          />
+        )}
+      </div>
+
+      <Script
+        src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false&libraries=services`}
+        onLoad={handleMapLoad}
+      />
+
       <style jsx global>{`
         .marker-light {
           position: absolute;
@@ -79,31 +107,6 @@ export default function Map() {
           }
         }
       `}</style>
-
-      <div className="mb-6 text-center">
-        <h1 className="text-3xl font-extrabold text-orange-500 italic">
-          EatBuddy
-        </h1>
-        <p className="text-gray-600 font-medium">
-          마커를 클릭해 메뉴와 리뷰를 확인하세요!
-        </p>
-      </div>
-
-      <div className="w-full max-w-5xl overflow-hidden rounded-3xl shadow-2xl border-8 border-white bg-white">
-        <div ref={mapContainer} className="w-full h-[500px] md:h-[700px]"></div>
-      </div>
-
-      {selectedPlace && (
-        <PlaceModal
-          place={selectedPlace}
-          onClose={() => setSelectedPlace(null)}
-        />
-      )}
-
-      <Script
-        src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false&libraries=services`}
-        onLoad={handleMapLoad}
-      />
     </div>
   );
 }

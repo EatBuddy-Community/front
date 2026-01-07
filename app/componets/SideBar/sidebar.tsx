@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+interface SideBarProps {
+  places: any[];
+  onPlaceClick: (place: any) => void;
+}
 
-export const Sidebar = () => {
+export const Sidebar = ({ places, onPlaceClick }: SideBarProps) => {
   const [activeCategory, setActiveCategory] = useState("전체");
 
   return (
