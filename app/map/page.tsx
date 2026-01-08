@@ -5,6 +5,7 @@ import Script from "next/script";
 import { useKakaoMap } from "../hooks/useKakaoMap/useKakaoMap";
 import { PlaceModal } from "../componets/PlaceModal/PlaceModal";
 import { Sidebar } from "../componets/SideBar/sidebar";
+import { StatusBar } from "../componets/StatusBar/StatusBar";
 
 export default function Map() {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -71,6 +72,7 @@ export default function Map() {
       {/* 5. 지도 영역 (flex-1로 나머지 공간 꽉 채우기) */}
       <div className="flex-1 relative">
         <div ref={mapContainer} className="w-full h-full"></div>
+        <StatusBar />
 
         {/* 선택된 장소 모달 */}
         {selectedPlace && (
