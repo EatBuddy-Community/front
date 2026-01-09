@@ -1,9 +1,14 @@
 interface PlaceModalProps {
   place: any;
   onClose: () => void;
+  onStartMatching?: () => void;
 }
 
-export const PlaceModal = ({ place, onClose }: PlaceModalProps) => {
+export const PlaceModal = ({
+  place,
+  onClose,
+  onStartMatching,
+}: PlaceModalProps) => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
       <div className="bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
@@ -41,9 +46,11 @@ export const PlaceModal = ({ place, onClose }: PlaceModalProps) => {
 
           <div className="flex gap-2">
             <button
-              onClick={() =>
-                alert(`${place.place_name}에서 매칭을 시작합니다!`)
-              }
+              onClick={() => {
+                if (onStartMatching) {
+                  onStartMatching();
+                }
+              }}
               className="flex-[2] bg-orange-500 text-white text-center py-4 rounded-2xl font-bold text-lg hover:bg-orange-600 shadow-lg transition-all active:scale-95"
             >
               🍚 함께 먹을 버디 찾기 (매칭)

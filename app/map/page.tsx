@@ -9,6 +9,7 @@ import { StatusBar } from "../componets/StatusBar/StatusBar";
 
 export default function Map() {
   const mapContainer = useRef<HTMLDivElement>(null);
+  const [isMatchingOpen, setIsMatchingOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<any>(null);
   const { initMap, places, mapInstance, markersRef } =
     useKakaoMap(mapContainer);
@@ -72,13 +73,17 @@ export default function Map() {
       {/* 5. 지도 영역 (flex-1로 나머지 공간 꽉 채우기) */}
       <div className="flex-1 relative">
         <div ref={mapContainer} className="w-full h-full"></div>
-        <StatusBar />
+        {isMatchingOpen && <StatusBar />}
 
         {/* 선택된 장소 모달 */}
         {selectedPlace && (
           <PlaceModal
             place={selectedPlace}
             onClose={() => setSelectedPlace(null)}
+            onStartMatching={() => {
+              setIsMatchingOpen(true); // StatusBar를 뜨게 함
+              setSelectedPlace(null); // 선택사항: 매칭 시작 시 상세 창은 닫기
+            }}
           />
         )}
       </div>
