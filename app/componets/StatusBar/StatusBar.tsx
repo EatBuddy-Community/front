@@ -13,7 +13,6 @@ export const StatusBar = () => {
         </p>
       </div>
 
-      {/* 상태 아이콘 (ㅁ 대신 닫기 버튼 예시) */}
       <div className="relative flex h-3 w-3">
         {/* 1. 뒤에서 퍼져나가는 애니메이션 원 */}
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
