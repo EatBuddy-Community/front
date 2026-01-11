@@ -1,11 +1,21 @@
 import React, { useState } from "react";
+import Tags from "../Tags/Tags";
 interface SideBarProps {
   places: any[];
   onPlaceClick: (place: any) => void;
 }
 
 export const Sidebar = ({ places, onPlaceClick }: SideBarProps) => {
-  const [activeCategory, setActiveCategory] = useState("전체");
+  const [activeCategory, setActiveCategory] = useState<string>("전체");
+  const categories: string[] = [
+    "전체",
+    "🍚 한식",
+    "🍣 일식",
+    "🍕 양식",
+    "☕ 카페",
+    "🍺 술집",
+    "🍜 중식",
+  ];
 
   return (
     <aside className="w-[400px] h-screen bg-white border-r border-gray-200 flex flex-col shadow-2xl z-20 overflow-hidden">
@@ -25,23 +35,11 @@ export const Sidebar = ({ places, onPlaceClick }: SideBarProps) => {
       </div>
 
       {/* 2. 카테고리 필터 (Horizontal Scroll) */}
-      <div className="px-6 py-2 flex gap-2 overflow-x-auto no-scrollbar mb-4">
-        {["전체", "🍚 한식", "🍣 일식", "🍕 양식", "☕ 카페", "🍺 술집"].map(
-          (cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm border ${
-                activeCategory === cat
-                  ? "bg-orange-500 border-orange-500 text-white"
-                  : "bg-white border-gray-100 text-gray-500 hover:border-orange-200"
-              }`}
-            >
-              {cat}
-            </button>
-          )
-        )}
-      </div>
+      <Tags
+        list={categories}
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+      />
 
       <div className="flex-1 overflow-y-auto px-6 space-y-8 pb-10 custom-scrollbar">
         {/* 3. 실시간 매칭 현황 (🔥) */}
