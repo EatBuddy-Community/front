@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Tags from "../Tags/Tags";
+import { MatchingSection } from "./MatchingSection/MatchingSection";
 interface SideBarProps {
   places: any[];
   onPlaceClick: (place: any) => void;
@@ -43,39 +44,7 @@ export const Sidebar = ({ places, onPlaceClick }: SideBarProps) => {
 
       <div className="flex-1 overflow-y-auto px-6 space-y-8 pb-10 custom-scrollbar">
         {/* 3. 실시간 매칭 현황 (🔥) */}
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-bold text-gray-800 flex items-center gap-2">
-              <span className="animate-pulse">🔥</span> 지금 매칭 중인 곳
-            </h2>
-            <span className="text-[11px] text-orange-500 font-bold hover:underline cursor-pointer">
-              더보기
-            </span>
-          </div>
-          <div className="space-y-3">
-            {[1, 2].map((i) => (
-              <div
-                key={i}
-                className="group p-4 bg-orange-50 rounded-2xl border border-orange-100 hover:shadow-md transition-all cursor-pointer"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <span className="text-[10px] bg-white text-orange-600 px-2 py-1 rounded-lg font-bold shadow-sm">
-                    2/4 명 참여중
-                  </span>
-                  <span className="text-[10px] text-orange-400 font-bold">
-                    마감 15분 전
-                  </span>
-                </div>
-                <h4 className="font-bold text-gray-800 underline-offset-4 group-hover:underline">
-                  성수동 갓잇 (GODEAT)
-                </h4>
-                <p className="text-xs text-gray-500 mt-1">
-                  "멕시칸 요리 같이 드실 버디 구해요! 🌮"
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <MatchingSection />
 
         {/* 4. 마이 플레이스 (즐겨찾기) */}
         <section>
