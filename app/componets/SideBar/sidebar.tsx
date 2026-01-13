@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Tags from "../Tags/Tags";
 import { MatchingSection } from "./MatchingSection/MatchingSection";
+import { FavoriteSection } from "./FavoriteItem/FavoriteSection";
 interface SideBarProps {
   places: any[];
   onPlaceClick: (place: any) => void;
@@ -8,6 +9,24 @@ interface SideBarProps {
 
 export const Sidebar = ({ places, onPlaceClick }: SideBarProps) => {
   const [activeCategory, setActiveCategory] = useState<string>("전체");
+  const DUMMY_FAVORITES = [
+    {
+      id: 1,
+      name: "어니언 성수",
+      category: "카페",
+      location: "성동구 성수동",
+      rating: 4.9,
+      reviewCount: 128,
+    },
+    {
+      id: 2,
+      name: "갓잇 성수점",
+      category: "멕시칸",
+      location: "성동구 성수동",
+      rating: 4.8,
+      reviewCount: 256,
+    },
+  ];
   const categories: string[] = [
     "전체",
     "🍚 한식",
@@ -47,32 +66,7 @@ export const Sidebar = ({ places, onPlaceClick }: SideBarProps) => {
         <MatchingSection />
 
         {/* 4. 마이 플레이스 (즐겨찾기) */}
-        <section>
-          <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-            ⭐ 내가 찜한 맛집
-          </h2>
-          <div className="grid grid-cols-1 gap-3">
-            {[1, 2].map((i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-xl transition-all cursor-pointer border border-transparent hover:border-gray-100"
-              >
-                <div className="w-14 h-14 bg-gray-200 rounded-xl flex-shrink-0" />
-                <div>
-                  <h4 className="text-sm font-bold text-gray-800">
-                    어니언 성수
-                  </h4>
-                  <p className="text-[11px] text-gray-400">
-                    카페 · 성동구 성수동
-                  </p>
-                  <p className="text-[11px] text-orange-500 font-bold">
-                    ★ 4.9 (리뷰 128)
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <FavoriteSection favorites={DUMMY_FAVORITES} />
 
         {/* 5. 실시간 트렌드 랭킹 */}
         <section className="bg-gray-50 rounded-3xl p-5 border border-gray-100">
