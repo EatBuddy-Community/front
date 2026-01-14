@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Tags from "../Tags/Tags";
 import { MatchingSection } from "./MatchingSection/MatchingSection";
 import { FavoriteSection } from "./FavoriteItem/FavoriteSection";
+import { TrendSection } from "./TrendSection/TrendSection";
 interface SideBarProps {
   places: any[];
   onPlaceClick: (place: any) => void;
@@ -36,6 +37,43 @@ export const Sidebar = ({ places, onPlaceClick }: SideBarProps) => {
     "🍺 술집",
     "🍜 중식",
   ];
+  const DUMMY_TRENDS = [
+    {
+      rank: 1,
+      name: "진미 평양냉면",
+      count: "매칭 42회",
+      status: "up", // 순위 상승 표시용
+      category: "한식",
+    },
+    {
+      rank: 2,
+      name: "쵸리상경",
+      count: "매칭 38회",
+      status: "same",
+      category: "솥밥",
+    },
+    {
+      rank: 3,
+      name: "우동 가조쿠",
+      count: "매칭 31회",
+      status: "down",
+      category: "일식",
+    },
+    {
+      rank: 4,
+      name: "난포 성수",
+      count: "매칭 29회",
+      status: "new",
+      category: "퓨전",
+    },
+    {
+      rank: 5,
+      name: "카페 노티드",
+      count: "매칭 25회",
+      status: "up",
+      category: "디저트",
+    },
+  ];
 
   return (
     <aside className="w-[400px] h-screen bg-white border-r border-gray-200 flex flex-col shadow-2xl z-20 overflow-hidden">
@@ -69,39 +107,7 @@ export const Sidebar = ({ places, onPlaceClick }: SideBarProps) => {
         <FavoriteSection favorites={DUMMY_FAVORITES} />
 
         {/* 5. 실시간 트렌드 랭킹 */}
-        <section className="bg-gray-50 rounded-3xl p-5 border border-gray-100">
-          <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-            📈 이번 주 핫플
-          </h2>
-          <div className="space-y-4">
-            {[
-              { rank: 1, name: "진미 평양냉면", count: "매칭 42회" },
-              { rank: 2, name: "쵸리상경", count: "매칭 38회" },
-              { rank: 3, name: "우동 가조쿠", count: "매칭 31회" },
-            ].map((item) => (
-              <div
-                key={item.rank}
-                className="flex items-center justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`text-sm font-black ${
-                      item.rank === 1 ? "text-orange-500" : "text-gray-400"
-                    }`}
-                  >
-                    0{item.rank}
-                  </span>
-                  <span className="text-sm font-medium text-gray-700">
-                    {item.name}
-                  </span>
-                </div>
-                <span className="text-[10px] text-gray-400 font-semibold">
-                  {item.count}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
+        <TrendSection trends={DUMMY_TRENDS} />
 
         {/* 6. 활동 히스토리 */}
         <section>
