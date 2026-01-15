@@ -3,6 +3,7 @@ import Tags from "../Tags/Tags";
 import { MatchingSection } from "./MatchingSection/MatchingSection";
 import { FavoriteSection } from "./FavoriteItem/FavoriteSection";
 import { TrendSection } from "./TrendSection/TrendSection";
+import HistorySection from "./History/HistorySection";
 interface SideBarProps {
   places: any[];
   onPlaceClick: (place: any) => void;
@@ -110,27 +111,7 @@ export const Sidebar = ({ places, onPlaceClick }: SideBarProps) => {
         <TrendSection trends={DUMMY_TRENDS} />
 
         {/* 6. 활동 히스토리 */}
-        <section>
-          <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-            🕒 최근 내 활동
-          </h2>
-          <div className="relative pl-4 border-l-2 border-orange-100 space-y-6 ml-1">
-            <div className="relative">
-              <div className="absolute -left-[21px] top-1 w-3 h-3 bg-orange-500 rounded-full border-2 border-white shadow-sm"></div>
-              <p className="text-[10px] text-gray-400 font-bold">TODAY</p>
-              <p className="text-[13px] text-gray-600">
-                성수동 갓잇 매칭 참여 신청
-              </p>
-            </div>
-            <div className="relative">
-              <div className="absolute -left-[21px] top-1 w-3 h-3 bg-gray-300 rounded-full border-2 border-white shadow-sm"></div>
-              <p className="text-[10px] text-gray-400 font-bold">2 DAYS AGO</p>
-              <p className="text-[13px] text-gray-600">
-                진미 평양냉면 방문 완료
-              </p>
-            </div>
-          </div>
-        </section>
+        <HistorySection />
       </div>
     </aside>
   );
