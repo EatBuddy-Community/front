@@ -7,6 +7,7 @@ import { PlaceModal } from "../componets/PlaceModal/PlaceModal";
 import { Sidebar } from "../componets/SideBar/sidebar";
 import { StatusBar } from "../componets/StatusBar/StatusBar";
 import { MatchingCreateSidebar } from "../componets/SideBar/MatchingCreateSidebar";
+import { useActiveMatches } from "../hooks/useActiveMatches/useActiveMatches";
 
 export default function Map() {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -15,6 +16,7 @@ export default function Map() {
   const [selectedPlace, setSelectedPlace] = useState<any>(null);
   const { initMap, places, mapInstance, markersRef } =
     useKakaoMap(mapContainer);
+  const { activePlaceIds, refresh } = useActiveMatches();
 
   // 2. 사이드바 리스트 클릭 시 지도를 이동시키는 함수
   const handlePlaceClick = (place: any) => {
@@ -35,7 +37,7 @@ export default function Map() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (p) => initMap(p.coords.latitude, p.coords.longitude),
-          () => initMap(37.5665, 126.978)
+          () => initMap(37.5665, 126.978),
         );
       }
     });
@@ -52,10 +54,10 @@ export default function Map() {
       });
       markersRef.current.set(place.id, marker);
       window.kakao.maps.event.addListener(marker, "click", () =>
-        setSelectedPlace(place)
+        setSelectedPlace(place),
       );
 
-      if (parseInt(place.id) % 2 === 0) {
+      if (activePlaceIds.includes(place.id)) {
         const content = document.createElement("div");
         content.className = "relative flex items-center justify-center";
         content.innerHTML = `
@@ -70,7 +72,7 @@ export default function Map() {
         });
       }
     });
-  }, [places, mapInstance]);
+  }, [places, mapInstance, activePlaceIds]);
 
   return (
     // 3. 기존의 flex-col을 flex-row(기본값)로 바꾸고 h-screen을 줍니다.
@@ -85,6 +87,7 @@ export default function Map() {
           onComplete={() => {
             setSidebarMode("HOME");
             setIsMatchingOpen(true); // 매칭 등록 완료 시 상단 바 띄우기
+            refresh();
           }}
         />
       )}
